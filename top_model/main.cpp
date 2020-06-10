@@ -12,6 +12,8 @@
 //Atomic model headers
 #include "../atomics/accumulator.hpp"
 #include "../atomics/infective.hpp"
+#include "../atomics/exposed.hpp"
+#include "../atomics/susceptible.hpp"
 
 //C++ headers
 #include <iostream>
@@ -36,13 +38,13 @@ struct SEIRD_defs{
 };
 
 /*************** Loggers *******************/
-    static ofstream out_messages("../simulation_results/SEIRD_output_messages.txt");
+    static ofstream out_messages("simulation_results/SEIRD_output_messages.txt");
     struct oss_sink_messages{
         static ostream& sink(){          
             return out_messages;
         }
     };
-    static ofstream out_state("../simulation_results/SEIRD_output_state.txt");
+    static ofstream out_state("simulation_results/SEIRD_output_state.txt");
     struct oss_sink_state{
         static ostream& sink(){          
             return out_state;
@@ -67,6 +69,11 @@ int main(int argc, char ** argv) {
     float mortality = 10.5;
     int infectivity_period = 14;
     float dt = 0.1;
+    int incubation_period = 5;
+    int total_population = 100000;
+    int initial_infective = 100;
+    float transmission_rate = 2.5;
+
 
     /****** recovered atomic model instantiation *******************/
     shared_ptr<dynamic::modeling::model> pop_recovered = dynamic::translate::make_dynamic_atomic_model<accumulator, TIME>("recovered");
@@ -75,29 +82,35 @@ int main(int argc, char ** argv) {
     shared_ptr<dynamic::modeling::model> pop_deceased = dynamic::translate::make_dynamic_atomic_model<accumulator, TIME>("deceased");
 
     /****** infective atomic models instantiation *******************/
-    shared_ptr<dynamic::modeling::model> pop_infective = dynamic::translate::make_dynamic_atomic_model<infective, TIME, float, int, float>("infective", 
-                                                            move(mortality), move(infectivity_period), move(dt));
+    shared_ptr<dynamic::modeling::model> pop_infective = dynamic::translate::make_dynamic_atomic_model<infective, TIME, int, float, int, float>("infective", 
+                                                           move(initial_infective), move(mortality), move(infectivity_period), move(dt));
     
     /****** exposed atomic models instantiation *******************/
-    //shared_ptr<dynamic::modeling::model> subnet2 = dynamic::translate::make_dynamic_atomic_model<Subnet, TIME>("subnet2");
-
+    shared_ptr<dynamic::modeling::model> pop_exposed = dynamic::translate::make_dynamic_atomic_model<exposed, TIME, int, float>("exposed", 
+                                                            move(incubation_period), move(dt));
     /****** susceptible atomic models instantiation *******************/
-
+     shared_ptr<dynamic::modeling::model> pop_susceptible = dynamic::translate::make_dynamic_atomic_model<susceptible, TIME, int, float, int, float>("susceptible", 
+                                                            move(total_population), move(transmission_rate), move(initial_infective), move(dt));
    
     /*******SEIRD COUPLED MODEL********/
     dynamic::modeling::Ports iports_SEIRD = {};
     dynamic::modeling::Ports oports_SEIRD  = {typeid(SEIRD_defs::susceptible),typeid(SEIRD_defs::exposed),
                     typeid(SEIRD_defs::infective),typeid(SEIRD_defs::recovered), typeid(SEIRD_defs::deceased)};
-    dynamic::modeling::Models submodels_SEIRD  = {pop_recovered, pop_deceased, pop_infective};
+    dynamic::modeling::Models submodels_SEIRD  = {pop_recovered, pop_deceased, pop_infective, pop_exposed, pop_susceptible};
     dynamic::modeling::EICs eics_SEIRD  = {};
     dynamic::modeling::EOCs eocs_SEIRD  = {
         dynamic::translate::make_EOC<accumulator_defs::report,SEIRD_defs::recovered>("recovered"),
         dynamic::translate::make_EOC<accumulator_defs::report,SEIRD_defs::deceased>("deceased"),
-        dynamic::translate::make_EOC<infective_defs::total_infective,SEIRD_defs::infective>("infective")
+        dynamic::translate::make_EOC<infective_defs::report,SEIRD_defs::infective>("infective"),
+        dynamic::translate::make_EOC<exposed_defs::report,SEIRD_defs::exposed>("exposed"),
+        dynamic::translate::make_EOC<susceptible_defs::report,SEIRD_defs::susceptible>("susceptible")
     };
     dynamic::modeling::ICs ics_SEIRD  = {
+        dynamic::translate::make_IC<susceptible_defs::new_exposed, exposed_defs::in>("susceptible","exposed"),
+        dynamic::translate::make_IC<exposed_defs::new_infective, infective_defs::in>("exposed","infective"),
         dynamic::translate::make_IC<infective_defs::deceased, accumulator_defs::in>("infective","deceased"),
-        dynamic::translate::make_IC<infective_defs::recovered, accumulator_defs::in>("infective","recovered")
+        dynamic::translate::make_IC<infective_defs::recovered, accumulator_defs::in>("infective","recovered"),
+        dynamic::translate::make_IC<infective_defs::total_infective, susceptible_defs::in>("infective","susceptible")    
     };
     shared_ptr<dynamic::modeling::coupled<TIME>> SEIRD ;
     SEIRD  = make_shared<dynamic::modeling::coupled<TIME>>(

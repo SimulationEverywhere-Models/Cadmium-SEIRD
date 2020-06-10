@@ -36,22 +36,23 @@ using namespace std;
             //Model parameters to be overload in the constructor
             float mortality;
             int infectivity_period;
+            int initial_infective;
             float dt; //integrative time
             // default constructor
             infective() noexcept{
               assert(false && "Infective (constructor): default constructor is not available");
             }
-            infective(float i_mortality, int i_infectivity_period, float i_dt){
+            infective(int i_initial_infective, float i_mortality, int i_infectivity_period, float i_dt){
                 mortality = i_mortality;
                 infectivity_period = i_infectivity_period;
                 dt = i_dt;
-                state.total_infective = 0;
+                state.total_infective = i_initial_infective;
                 state.new_deceased = 0;
                 state.new_recovered = 0;
-                state.report = false;
-                state.info_infective = false;
-                state.info_deceased = false;
-                state.info_recovered = false;
+                state.report = true;
+                state.info_infective = true;
+                state.info_deceased = true;
+                state.info_recovered = true;
             }
             // state definition
             struct state_type{
@@ -131,7 +132,7 @@ using namespace std;
                 TIME next_internal;
                 if(state.report == true || state.info_infective == true || state.info_deceased  == true
                         || state.info_recovered  == true){
-                    next_internal  = TIME(0);
+                    next_internal  = TIME(dt);
                 }else{
                     next_internal = std::numeric_limits<TIME>::infinity();
                 }   

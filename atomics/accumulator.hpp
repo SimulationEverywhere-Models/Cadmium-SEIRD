@@ -33,7 +33,7 @@ using namespace std;
             // default constructor
             accumulator() noexcept{
               state.total_amount    = 0;
-              state.report     = false;
+              state.report     = true;
             }
             // state definition
             struct state_type{
