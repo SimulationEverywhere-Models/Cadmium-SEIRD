@@ -20,7 +20,8 @@
 #include <chrono>
 #include <algorithm>
 #include <string>
-#include<fstream>
+#include <sstream>
+#include <fstream>
 
 using namespace std;
 using namespace cadmium;
@@ -66,6 +67,65 @@ int main(int argc, char ** argv) {
         cout << argv[0] << " path to the input file " << endl;
         return 1; 
     }*/
+	float mortality;
+	int infectivity_period;
+	float dt;
+	int incubation_period;
+	int total_population;
+	int initial_infective;
+	float transmission_rate;
+	ifstream inputReader;
+	
+	//default filename if none is provided
+	if(argc<2){
+		inputReader.open("input_data/input.txt");
+	}else{
+		std::string temp = argv[1];
+		std::string filePath = "input_data/" + temp;
+		inputReader.open(filePath);
+	}
+	
+	if(inputReader.is_open()){
+		std::string line;
+		
+		getline(inputReader, line);
+		line = line.substr(line.find("=")+1);
+		if(line.empty() || line.compare(" ")==0 || line.compare("  ")==0){
+			assert(false && "Please check the mortality input");
+		}else{
+			mortality = std::stof(line);
+		}
+		
+		getline(inputReader, line);
+		line = line.substr(line.find("=")+1);
+		infectivity_period = std::stoi(line);
+		
+		getline(inputReader, line);
+		line = line.substr(line.find("=")+1);
+		dt = std::stof(line);
+		
+		getline(inputReader, line);
+		line = line.substr(line.find("=")+1);
+		incubation_period = std::stoi(line);
+		
+		getline(inputReader, line);
+		line = line.substr(line.find("=")+1);
+		total_population = std::stoi(line);
+		
+		getline(inputReader, line);
+		line = line.substr(line.find("=")+1);
+		initial_infective = std::stoi(line);
+		
+		getline(inputReader, line);
+		line = line.substr(line.find("=")+1);
+		transmission_rate = std::stof(line);
+		
+		//cout<<mortality<<","<<infectivity_period<<","<<dt<<","<<incubation_period<<","<<total_population<<","<<initial_infective<<","<<transmission_rate<<endl;
+		
+		inputReader.close();
+	}
+	
+	/*
     float mortality = 10.5;
     int infectivity_period = 14;
     float dt = 0.1;
@@ -73,7 +133,7 @@ int main(int argc, char ** argv) {
     int total_population = 100000;
     int initial_infective = 100;
     float transmission_rate = 2.5;
-
+	*/
 
     /****** recovered atomic model instantiation *******************/
     shared_ptr<dynamic::modeling::model> pop_recovered = dynamic::translate::make_dynamic_atomic_model<accumulator, TIME>("recovered");
