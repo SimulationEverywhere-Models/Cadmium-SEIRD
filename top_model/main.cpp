@@ -17,6 +17,7 @@
 
 //C++ headers
 #include <iostream>
+#include <iomanip>
 #include <chrono>
 #include <algorithm>
 #include <string>
@@ -30,11 +31,11 @@ using TIME = float;
 
 /***** Define output ports for coupled model *****/
 struct SEIRD_defs{
-    struct susceptible : public out_port<int>{};
-    struct exposed : public out_port<int>{};
-    struct infective: public out_port<int>{};
-    struct recovered : public out_port<int>{};
-    struct deceased : public out_port<int>{};
+    struct susceptible : public out_port<float>{};
+    struct exposed : public out_port<float>{};
+    struct infective: public out_port<float>{};
+    struct recovered : public out_port<float>{};
+    struct deceased : public out_port<float>{};
 };
 
 /*************** Loggers *******************/
@@ -60,19 +61,19 @@ struct SEIRD_defs{
 /******************************************************/
 
 int main(int argc, char ** argv) {
-
+   
    /* if (argc < 2) {
         cout << "Program used with wrong parameters. The program must be invoked as follow:";
         cout << argv[0] << " path to the input file " << endl;
         return 1; 
     }*/
-    float mortality = 10.5;
-    int infectivity_period = 14;
+    float mortality = 0.85;
+    float infectivity_period = 14.39;
     float dt = 0.1;
-    int incubation_period = 5;
-    int total_population = 100000;
-    int initial_infective = 100;
-    float transmission_rate = 2.5;
+    float incubation_period = 6.38;
+    int total_population = 8000000;
+    int initial_infective = 1;
+    float transmission_rate = 7.2*0.42;
 
 
     /****** recovered atomic model instantiation *******************/
@@ -82,11 +83,11 @@ int main(int argc, char ** argv) {
     shared_ptr<dynamic::modeling::model> pop_deceased = dynamic::translate::make_dynamic_atomic_model<accumulator, TIME>("deceased");
 
     /****** infective atomic models instantiation *******************/
-    shared_ptr<dynamic::modeling::model> pop_infective = dynamic::translate::make_dynamic_atomic_model<infective, TIME, int, float, int, float>("infective", 
+    shared_ptr<dynamic::modeling::model> pop_infective = dynamic::translate::make_dynamic_atomic_model<infective, TIME, int, float, float, float>("infective", 
                                                            move(initial_infective), move(mortality), move(infectivity_period), move(dt));
     
     /****** exposed atomic models instantiation *******************/
-    shared_ptr<dynamic::modeling::model> pop_exposed = dynamic::translate::make_dynamic_atomic_model<exposed, TIME, int, float>("exposed", 
+    shared_ptr<dynamic::modeling::model> pop_exposed = dynamic::translate::make_dynamic_atomic_model<exposed, TIME, float, float>("exposed", 
                                                             move(incubation_period), move(dt));
     /****** susceptible atomic models instantiation *******************/
      shared_ptr<dynamic::modeling::model> pop_susceptible = dynamic::translate::make_dynamic_atomic_model<susceptible, TIME, int, float, int, float>("susceptible", 

@@ -22,8 +22,8 @@ using namespace std;
 
 //Port definition
     struct accumulator_defs{
-        struct report : public out_port<int> { };
-        struct in : public in_port<int> { };
+        struct report : public out_port<float> { };
+        struct in : public in_port<float> { };
     };
    
     template<typename TIME>
@@ -37,7 +37,7 @@ using namespace std;
             }
             // state definition
             struct state_type{
-              int total_amount;
+              float total_amount;
               bool report;
             }; 
             state_type state;
@@ -87,6 +87,8 @@ using namespace std;
             }
 
             friend std::ostringstream& operator<<(std::ostringstream& os, const typename accumulator<TIME>::state_type& i) {
+                 os.precision(2);
+                os << fixed;
                 os << "<total_amount: " << i.total_amount << ">"; 
             return os;
             }
