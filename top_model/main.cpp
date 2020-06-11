@@ -90,35 +90,63 @@ int main(int argc, char ** argv) {
 		
 		getline(inputReader, line);
 		line = line.substr(line.find("=")+1);
-		if(line.empty() || line.compare(" ")==0 || line.compare("  ")==0){
+		if(line.empty() || line[1]==' '|| int(line[1])==13 || int(line[0])==13){
 			assert(false && "Please check the mortality input");
+			//abort();
 		}else{
+			//cout<<"this is the line: "<<line<<endl;
+			//cout<<"got here"<<endl;
 			mortality = std::stof(line);
+			//cout<<"got here"<<endl;
 		}
 		
 		getline(inputReader, line);
 		line = line.substr(line.find("=")+1);
-		infectivity_period = std::stoi(line);
+		if(line.empty() || line[1]==' '|| int(line[1])==13 || int(line[0])==13){
+			assert(false && "Please check the infectivity period input");
+		}else{
+			infectivity_period = std::stoi(line);
+		}
 		
 		getline(inputReader, line);
 		line = line.substr(line.find("=")+1);
-		dt = std::stof(line);
+		if(line.empty() || line[1]==' '|| int(line[1])==13 || int(line[0])==13){
+			assert(false && "Please check the dt input");
+		}else{
+			dt = std::stof(line);
+		}
 		
 		getline(inputReader, line);
 		line = line.substr(line.find("=")+1);
-		incubation_period = std::stoi(line);
+		if(line.empty() || line[1]==' '|| int(line[1])==13 || int(line[0])==13){
+			assert(false && "Please check the incubation period input");
+		}else{
+			incubation_period = std::stoi(line);
+		}
 		
 		getline(inputReader, line);
 		line = line.substr(line.find("=")+1);
-		total_population = std::stoi(line);
+		if(line.empty() || line[1]==' '|| int(line[1])==13 || int(line[0])==13){
+			assert(false && "Please check the total population input");
+		}else{
+			total_population = std::stoi(line);
+		}
 		
 		getline(inputReader, line);
 		line = line.substr(line.find("=")+1);
-		initial_infective = std::stoi(line);
+		if(line.empty() || line[1]==' '|| int(line[1])==13 || int(line[0])==13){
+			assert(false && "Please check the initial infective input");
+		}else{
+			initial_infective = std::stoi(line);
+		}
 		
 		getline(inputReader, line);
 		line = line.substr(line.find("=")+1);
-		transmission_rate = std::stof(line);
+		if(line.empty() || line[1]==' '|| int(line[1])==13 || int(line[0])==13){
+			assert(false && "Please check the transmission rate input");
+		}else{
+			transmission_rate = std::stof(line);
+		}
 		
 		//cout<<mortality<<","<<infectivity_period<<","<<dt<<","<<incubation_period<<","<<total_population<<","<<initial_infective<<","<<transmission_rate<<endl;
 		
