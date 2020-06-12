@@ -79,18 +79,20 @@ int main(int argc, char ** argv) {
 	//default filename if none is provided
 	if(argc<2){
 		inputReader.open("input_data/input.txt");
-	}else{
+	}else{ //branch for providing filename
 		std::string temp = argv[1];
 		std::string filePath = "input_data/" + temp;
 		inputReader.open(filePath);
 	}
 	
+	//reading input from file
 	if(inputReader.is_open()){
-		std::string line;
+		std::string line; //store read in line
 		
+		//these blocks read the input for each variable and ensure that they have been provided
 		getline(inputReader, line);
 		line = line.substr(line.find("=")+1);
-		if(line.empty() || line[1]==' '|| int(line[1])==13 || int(line[0])==13){
+		if(line.empty() || line[1]==' '|| int(line[1])==13 || int(line[0])==13){ //the comparison to 13 here is to the ascii value of the carriage return character
 			assert(false && "Please check the mortality input");
 			//abort();
 		}else{
