@@ -22,9 +22,9 @@ using namespace std;
 
 //Port definition
 struct susceptible_defs{
-    struct report : public out_port<int> { };
-    struct new_exposed : public out_port<int> { };
-    struct in : public in_port<int> { };
+    struct report : public out_port<float> { };
+    struct new_exposed : public out_port<float> { };
+    struct in : public in_port<float> { };
 };
 
 enum SDL_STATE {EMPTY = 0, NON_EMPTY =1};
@@ -56,8 +56,8 @@ enum SDL_STATE {EMPTY = 0, NON_EMPTY =1};
             // state definition
             struct state_type{
                 SDL_STATE sdl_state;
-                int total_susceptible; 
-                int new_exposed;
+                float total_susceptible; 
+                float new_exposed;
                 bool report;
                 bool info;
             }; 
@@ -85,9 +85,9 @@ enum SDL_STATE {EMPTY = 0, NON_EMPTY =1};
                 }
                 state.report = true;  
                 state.info  = true;
-                int infective = get_messages<typename susceptible_defs::in>(mbs)[0];
+                float infective = get_messages<typename susceptible_defs::in>(mbs)[0];
                 if(state.sdl_state == NON_EMPTY){
-                    int new_exposed_auxiliary = (int)((transmission_rate*state.total_susceptible*infective)/total_population)*dt;
+                    float new_exposed_auxiliary = ((transmission_rate*state.total_susceptible*infective)/total_population)*dt;
                     state.new_exposed = min(state.total_susceptible, new_exposed_auxiliary); 
                     state.total_susceptible -= state.new_exposed;
                     if(state.total_susceptible > 0){
@@ -136,6 +136,8 @@ enum SDL_STATE {EMPTY = 0, NON_EMPTY =1};
             }
 
             friend std::ostringstream& operator<<(std::ostringstream& os, const typename susceptible<TIME>::state_type& i) {
+                 os.precision(2);
+                os << fixed;
                 os << "<total_susceptible " << i.total_susceptible << ">"; 
             return os;
             }

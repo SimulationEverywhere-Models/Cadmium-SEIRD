@@ -17,6 +17,7 @@
 
 //C++ headers
 #include <iostream>
+#include <iomanip>
 #include <chrono>
 #include <algorithm>
 #include <string>
@@ -31,11 +32,11 @@ using TIME = float;
 
 /***** Define output ports for coupled model *****/
 struct SEIRD_defs{
-    struct susceptible : public out_port<int>{};
-    struct exposed : public out_port<int>{};
-    struct infective: public out_port<int>{};
-    struct recovered : public out_port<int>{};
-    struct deceased : public out_port<int>{};
+    struct susceptible : public out_port<float>{};
+    struct exposed : public out_port<float>{};
+    struct infective: public out_port<float>{};
+    struct recovered : public out_port<float>{};
+    struct deceased : public out_port<float>{};
 };
 
 /*************** Loggers *******************/
@@ -61,16 +62,11 @@ struct SEIRD_defs{
 /******************************************************/
 
 int main(int argc, char ** argv) {
-
-   /* if (argc < 2) {
-        cout << "Program used with wrong parameters. The program must be invoked as follow:";
-        cout << argv[0] << " path to the input file " << endl;
-        return 1; 
-    }*/
-	float mortality;
-	int infectivity_period;
+   
+  float mortality;
+	float infectivity_period;
 	float dt;
-	int incubation_period;
+	float incubation_period;
 	int total_population;
 	int initial_infective;
 	float transmission_rate;
@@ -107,7 +103,7 @@ int main(int argc, char ** argv) {
 		if(line.empty() || line[1]==' '|| int(line[1])==13 || int(line[0])==13){
 			assert(false && "Please check the infectivity period input");
 		}else{
-			infectivity_period = std::stoi(line);
+			infectivity_period = std::stof(line);
 		}
 		
 		getline(inputReader, line);
@@ -123,7 +119,7 @@ int main(int argc, char ** argv) {
 		if(line.empty() || line[1]==' '|| int(line[1])==13 || int(line[0])==13){
 			assert(false && "Please check the incubation period input");
 		}else{
-			incubation_period = std::stoi(line);
+			incubation_period = std::stof(line);
 		}
 		
 		getline(inputReader, line);
@@ -155,15 +151,8 @@ int main(int argc, char ** argv) {
 		inputReader.close();
 	}
 	
-	/*
-    float mortality = 10.5;
-    int infectivity_period = 14;
-    float dt = 0.1;
-    int incubation_period = 5;
-    int total_population = 100000;
-    int initial_infective = 100;
-    float transmission_rate = 2.5;
-	*/
+
+
 
     /****** recovered atomic model instantiation *******************/
     shared_ptr<dynamic::modeling::model> pop_recovered = dynamic::translate::make_dynamic_atomic_model<accumulator, TIME>("recovered");
@@ -172,11 +161,11 @@ int main(int argc, char ** argv) {
     shared_ptr<dynamic::modeling::model> pop_deceased = dynamic::translate::make_dynamic_atomic_model<accumulator, TIME>("deceased");
 
     /****** infective atomic models instantiation *******************/
-    shared_ptr<dynamic::modeling::model> pop_infective = dynamic::translate::make_dynamic_atomic_model<infective, TIME, int, float, int, float>("infective", 
+    shared_ptr<dynamic::modeling::model> pop_infective = dynamic::translate::make_dynamic_atomic_model<infective, TIME, int, float, float, float>("infective", 
                                                            move(initial_infective), move(mortality), move(infectivity_period), move(dt));
     
     /****** exposed atomic models instantiation *******************/
-    shared_ptr<dynamic::modeling::model> pop_exposed = dynamic::translate::make_dynamic_atomic_model<exposed, TIME, int, float>("exposed", 
+    shared_ptr<dynamic::modeling::model> pop_exposed = dynamic::translate::make_dynamic_atomic_model<exposed, TIME, float, float>("exposed", 
                                                             move(incubation_period), move(dt));
     /****** susceptible atomic models instantiation *******************/
      shared_ptr<dynamic::modeling::model> pop_susceptible = dynamic::translate::make_dynamic_atomic_model<susceptible, TIME, int, float, int, float>("susceptible", 

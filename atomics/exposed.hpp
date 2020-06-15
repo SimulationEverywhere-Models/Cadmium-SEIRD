@@ -21,10 +21,10 @@ using namespace std;
 
 //Port definition
     struct exposed_defs{
-        struct report : public out_port<int> { };
-        struct total_exposed : public out_port<int> { };
-        struct new_infective : public out_port<int> { };
-        struct in : public in_port<int> { };
+        struct report : public out_port<float> { };
+        struct total_exposed : public out_port<float> { };
+        struct new_infective : public out_port<float> { };
+        struct in : public in_port<float> { };
     };
         
 
@@ -33,13 +33,13 @@ using namespace std;
     class exposed{
         public:     
             //Model parameters to be overload in the constructor
-            int incubation_period;
+            float incubation_period;
             float dt; //integrative time
             // default constructor
             exposed() noexcept{
               assert(false && "exposed (constructor): default constructor is not available");
             }
-            exposed(int i_incubation_period, float i_dt){
+            exposed(float i_incubation_period, float i_dt){
             
                 incubation_period = i_incubation_period;
                 dt = i_dt;
@@ -50,8 +50,8 @@ using namespace std;
             }
             // state definition
             struct state_type{
-                int total_exposed;
-                int new_infective; 
+                float total_exposed;
+                float new_infective; 
                 bool report;
                 bool info;
             }; 
@@ -79,7 +79,7 @@ using namespace std;
                 if(get_messages<typename exposed_defs::in>(mbs).size()>1){
                     assert(false && "Infective (external): there is more than one message in the bag");
                 }
-                int new_exposed = get_messages<typename exposed_defs::in>(mbs)[0];
+                float new_exposed = get_messages<typename exposed_defs::in>(mbs)[0];
                 state.new_infective = (state.total_exposed/incubation_period)*dt;
                 state.total_exposed = state.total_exposed + new_exposed - state.new_infective;
                 state.report = true;  
@@ -118,6 +118,8 @@ using namespace std;
             }
 
             friend std::ostringstream& operator<<(std::ostringstream& os, const typename exposed<TIME>::state_type& i) {
+                 os.precision(2);
+                os << fixed;
                 os << "<total_exposed " << i.total_exposed << ">"; 
             return os;
             }
