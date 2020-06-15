@@ -21,7 +21,8 @@
 #include <chrono>
 #include <algorithm>
 #include <string>
-#include<fstream>
+#include <sstream>
+#include <fstream>
 
 using namespace std;
 using namespace cadmium;
@@ -62,18 +63,95 @@ struct SEIRD_defs{
 
 int main(int argc, char ** argv) {
    
-   /* if (argc < 2) {
-        cout << "Program used with wrong parameters. The program must be invoked as follow:";
-        cout << argv[0] << " path to the input file " << endl;
-        return 1; 
-    }*/
-    float mortality = 0.85;
-    float infectivity_period = 14.39;
-    float dt = 0.1;
-    float incubation_period = 6.38;
-    int total_population = 8000000;
-    int initial_infective = 1;
-    float transmission_rate = 7.2*0.42;
+  float mortality;
+	float infectivity_period;
+	float dt;
+	float incubation_period;
+	int total_population;
+	int initial_infective;
+	float transmission_rate;
+	ifstream inputReader;
+	
+	//default filename if none is provided
+	if(argc<2){
+		inputReader.open("input_data/input.txt");
+	}else{ //branch for providing filename
+		std::string temp = argv[1];
+		std::string filePath = "input_data/" + temp;
+		inputReader.open(filePath);
+	}
+	
+	//reading input from file
+	if(inputReader.is_open()){
+		std::string line; //store read in line
+		
+		//these blocks read the input for each variable and ensure that they have been provided
+		getline(inputReader, line);
+		line = line.substr(line.find("=")+1);
+		if(line.empty() || line[1]==' '|| int(line[1])==13 || int(line[0])==13){ //the comparison to 13 here is to the ascii value of the carriage return character
+			assert(false && "Please check the mortality input");
+			//abort();
+		}else{
+			//cout<<"this is the line: "<<line<<endl;
+			//cout<<"got here"<<endl;
+			mortality = std::stof(line);
+			//cout<<"got here"<<endl;
+		}
+		
+		getline(inputReader, line);
+		line = line.substr(line.find("=")+1);
+		if(line.empty() || line[1]==' '|| int(line[1])==13 || int(line[0])==13){
+			assert(false && "Please check the infectivity period input");
+		}else{
+			infectivity_period = std::stof(line);
+		}
+		
+		getline(inputReader, line);
+		line = line.substr(line.find("=")+1);
+		if(line.empty() || line[1]==' '|| int(line[1])==13 || int(line[0])==13){
+			assert(false && "Please check the dt input");
+		}else{
+			dt = std::stof(line);
+		}
+		
+		getline(inputReader, line);
+		line = line.substr(line.find("=")+1);
+		if(line.empty() || line[1]==' '|| int(line[1])==13 || int(line[0])==13){
+			assert(false && "Please check the incubation period input");
+		}else{
+			incubation_period = std::stof(line);
+		}
+		
+		getline(inputReader, line);
+		line = line.substr(line.find("=")+1);
+		if(line.empty() || line[1]==' '|| int(line[1])==13 || int(line[0])==13){
+			assert(false && "Please check the total population input");
+		}else{
+			total_population = std::stoi(line);
+		}
+		
+		getline(inputReader, line);
+		line = line.substr(line.find("=")+1);
+		if(line.empty() || line[1]==' '|| int(line[1])==13 || int(line[0])==13){
+			assert(false && "Please check the initial infective input");
+		}else{
+			initial_infective = std::stoi(line);
+		}
+		
+		getline(inputReader, line);
+		line = line.substr(line.find("=")+1);
+		if(line.empty() || line[1]==' '|| int(line[1])==13 || int(line[0])==13){
+			assert(false && "Please check the transmission rate input");
+		}else{
+			transmission_rate = std::stof(line);
+		}
+		
+		//cout<<mortality<<","<<infectivity_period<<","<<dt<<","<<incubation_period<<","<<total_population<<","<<initial_infective<<","<<transmission_rate<<endl;
+		
+		inputReader.close();
+	}
+	
+
 
 
     /****** recovered atomic model instantiation *******************/
