@@ -25,6 +25,7 @@ https://github.com/SimulationEverywhere-Models/Cadmium-SEIRD
 ### OPTION 1 - Default parameters
 
 > ./bin/SEIRD (linux)
+
 > ./bin/SEIRD.exe (windows)
 
 ### OPTION 2 - Define your own parameters 
@@ -32,7 +33,9 @@ https://github.com/SimulationEverywhere-Models/Cadmium-SEIRD
 Place the text file (e.g. my_data.txt) with the input parameters in the folder *input_data*
 
 Run the program normally using
+
 > ./bin/SEIRD my_data.txt (linux)
+
 > ./bin/SEIRD.exe my_data.txt (windows)
  
 **NOTE**
@@ -42,8 +45,11 @@ To ensure this requirement is satisfied, we provide a template.txt file where th
 When inputting data values please do not add additional whitespace. 
 One is fine but the program will not recognise data after that.
 Examples
+
 > mortality = 10.3  //okay
+
 > mortality =10.3   //okay
+
 > mortality =  10.3 //NOT okay 
 
 2. Ensure all the data is inputted, otherwise the program will not run and it will display an appropriate error message.
