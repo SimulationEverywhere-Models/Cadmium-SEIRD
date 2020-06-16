@@ -6,3 +6,7 @@ build/*
 
 # Simulation resutls
 simulation_results/*
+
+#Phyton notebook auxiliary
+.ipynb*
+

@@ -54,3 +54,8 @@ Examples
 
 2. Ensure all the data is inputted, otherwise the program will not run and it will display an appropriate error message.
 It will only display the first missing data tag it encounters and any subsequent tags will not be read
+
+## Visualize the results
+
+1. Execute the python notebook. 
+The second graph is only relevant if you provide benchmark results (see folder notebooks/data)
