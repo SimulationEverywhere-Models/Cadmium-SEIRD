@@ -1,4 +1,4 @@
-#SEIRD
+# SEIRD
 
 The model is available in https://github.com/SimulationEverywhere-Models/Cadmium-SEIRD
 
@@ -22,12 +22,12 @@ https://github.com/SimulationEverywhere-Models/Cadmium-SEIRD
 
 ## Run the model
 
-###OPTION 1 - Default parameters
+### OPTION 1 - Default parameters
 
 > ./bin/SEIRD (linux)
 > ./bin/SEIRD.exe (windows)
 
-###OPTION 2 - Define your own parameters 
+### OPTION 2 - Define your own parameters 
 
 Place the text file (e.g. my_data.txt) with the input parameters in the folder *input_data*
 
